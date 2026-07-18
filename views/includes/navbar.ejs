@@ -1,0 +1,200 @@
+<nav class="navbar navbar-expand-md bg-body-tertiary border-bottom sticky-top">
+  <div class="container-fluid">
+
+    <a class="navbar-brand" href="/listings">
+      <i class="fa-regular fa-compass"></i>
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+      <!-- Left side -->
+      <div class="navbar-nav">
+        <a class="nav-link" href="/listings">Explore</a>
+      </div>
+
+      <!-- Search bar -->
+      <div class="search-container mx-auto">
+        <form
+          class="search-form"
+          method="post"
+          action="/search"
+        >
+          <div class="search-input-container">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="search-icon"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+
+            <input
+              class="form-control search-input"
+              type="search"
+              placeholder="Search anything..."
+              aria-label="Search"
+              name="search"
+            >
+          </div>
+
+          <button class="btn btn-search" type="submit">
+            Search
+          </button>
+        </form>
+      </div>
+
+      <!-- Right side -->
+      <div class="navbar-nav ms-auto align-items-md-center">
+        <a class="nav-link" href="/listings/new">
+          Airbnb your home
+        </a>
+
+        <% if (!currUser) { %>
+          <a class="nav-link" href="/signup">
+            <b>Sign Up</b>
+          </a>
+
+          <a class="nav-link" href="/login">
+            <b>Log In</b>
+          </a>
+        <% } %>
+
+        <% if (currUser) { %>
+          <a class="nav-link" href="/logout">
+            <b>Log Out</b>
+          </a>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  
+
+    .search-container {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 25px;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  background-color: white;
+  border: 1px solid #dddddd;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.search-form:hover {
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
+}
+
+.search-input-container {
+  position: relative;
+  flex-grow: 1;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  color: #6c757d;
+  pointer-events: none;
+}
+
+.form-control.search-input {
+  width: 100%;
+  height: 45px;
+  padding-left: 48px;
+  border: none;
+  background-color: transparent;
+  font-size: 1rem;
+}
+
+.form-control.search-input:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.btn-search {
+  flex-shrink: 0;
+  padding: 10px 22px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.btn-search:hover {
+  color: white;
+  background-color: #0056b3;
+  transform: scale(1.03);
+}
+
+/* Tablet and smaller screens */
+@media (max-width: 991px) {
+  .search-container {
+    max-width: 450px;
+    margin: 10px auto;
+  }
+
+  .navbar-nav {
+    align-items: flex-start !important;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 767px) {
+  .search-container {
+    width: 100%;
+    max-width: none;
+    margin: 15px 0;
+  }
+
+  .search-form {
+    padding: 6px 8px;
+  }
+
+  .btn-search {
+    padding: 9px 16px;
+  }
+}
+
+    /* .search-icon {
+        color: #6c757d;
+        
+        left: 35px;
+        top: 50%;
+       
+    } */
+</style>
