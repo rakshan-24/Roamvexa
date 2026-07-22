@@ -24,40 +24,52 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("./models/user.js");
-const dbUrl = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLASDB_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/wanderlust";
+const port = process.env.PORT || 3003;
 
 app.use(methodoverride("_method"));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 app.use(express.urlencoded({ extended: true }));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
 
 const sessionOption = {
-  secret: process.env.SECRET,
+  secret: process.env.SECRET || "roamvexa-secret",
   resave: false,
   saveUninitialized: true,
   cookie: {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
   },
 };
 
 const setupSession = (mongoUrl) => {
-  const store = MongoStore.create({
-    mongoUrl,
-    crypto:{
-      secret: process.env.SECRET,
-    },
-    touchAfter: 24 * 60 * 60,
-  });
+  let store;
 
-  store.on("error", function (e) {
-    console.error("Session store error", e);
-  });
+  if (mongoUrl) {
+    store = MongoStore.create({
+      mongoUrl,
+      crypto: {
+        secret: process.env.SECRET || "roamvexa-secret",
+      },
+      touchAfter: 24 * 60 * 60,
+    });
+
+    store.on("error", function (e) {
+      console.error("Session store error", e);
+    });
+  } else {
+    console.warn("MongoDB session store unavailable; using default memory store.");
+  }
 
   app.use(session({ ...sessionOption, store }));
   app.use(flash());
@@ -106,9 +118,10 @@ passport.deserializeUser(User.deserializeUser());
 const localDbUrl = "mongodb://127.0.0.1:27017/wanderlust";
 
 async function main() {
-  let connectedUrl = dbUrl;
+  let connectedUrl = null;
   try {
     await mongoose.connect(dbUrl);
+    connectedUrl = dbUrl;
     console.log(`Connected to DB: ${dbUrl}`);
   } catch (err) {
     console.warn(`Failed to connect to primary DB (${dbUrl}), trying local fallback...`);
@@ -117,8 +130,8 @@ async function main() {
       connectedUrl = localDbUrl;
       console.log(`Connected to local DB: ${localDbUrl}`);
     } catch (localErr) {
-      console.error("Local MongoDB fallback also failed:", localErr);
-      throw localErr;
+      console.warn("MongoDB connection unavailable; continuing without a persistent session store.", localErr);
+      connectedUrl = null;
     }
   }
 
@@ -146,13 +159,17 @@ async function main() {
     next();
   });
 
-  app.listen(3003, () => {
-    console.log("server started on port 3003");
-  });
+  if (require.main === module) {
+    app.listen(port, () => {
+      console.log(`server started on port ${port}`);
+    });
+  }
 }
 
 main().catch((err) => {
-  console.error("MongoDB connection failed:", err);
+  console.error("Application startup failed:", err);
   process.exit(1);
 });
+
+module.exports = app;
 
