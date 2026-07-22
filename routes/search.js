@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
+const { isLoggedIn, isOwner, validateListing } = require("../middleware-old.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 
 const listings = require("../models/listing");
