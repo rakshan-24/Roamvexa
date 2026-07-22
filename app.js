@@ -24,6 +24,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("./models/user.js");
 const dbUrl = process.env.ATLASDB_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/wanderlust";
 const port = process.env.PORT || 3003;
+const host = process.env.HOST || "0.0.0.0";
 
 app.use(methodoverride("_method"));
 
@@ -158,8 +159,8 @@ async function main() {
   });
 
   if (require.main === module) {
-    app.listen(port, () => {
-      console.log(`server started on port ${port}`);
+    app.listen(port, host, () => {
+      console.log(`server started on ${host}:${port}`);
     });
   }
 }

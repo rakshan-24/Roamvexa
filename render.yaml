@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: roamvexa
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
