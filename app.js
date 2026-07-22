@@ -142,6 +142,10 @@ async function main() {
     next();
   });
 
+  app.get("/", (req, res) => {
+    res.status(200).send("Roamvexa is running. Database features may be unavailable until MongoDB is configured.");
+  });
+
   app.use("/listings", ListingRouter);
   app.use("/listings/:id", reviewRouter);
   app.use("/", userRouter);
