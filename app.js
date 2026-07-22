@@ -118,13 +118,13 @@ const localDbUrl = "mongodb://127.0.0.1:27017/wanderlust";
 async function main() {
   let connectedUrl = null;
   try {
-    await mongoose.connect(dbUrl);
+    await mongoose.connect(dbUrl, { serverSelectionTimeoutMS: 5000 });
     connectedUrl = dbUrl;
     console.log(`Connected to DB: ${dbUrl}`);
   } catch (err) {
     console.warn(`Failed to connect to primary DB (${dbUrl}), trying local fallback...`);
     try {
-      await mongoose.connect(localDbUrl);
+      await mongoose.connect(localDbUrl, { serverSelectionTimeoutMS: 5000 });
       connectedUrl = localDbUrl;
       console.log(`Connected to local DB: ${localDbUrl}`);
     } catch (localErr) {
